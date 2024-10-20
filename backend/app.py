@@ -83,6 +83,11 @@ User Input: {text}
 Relevant Document Chunks:
 {formatted_chunks}
 
+Now, do the following two-step process:
+1. Determine whether the user's question requires detailed analysis or a quick answer.
+2. If it requires a quick answer, simply provide the answer without using the formatted chunks. 
+3. If it requires a detailed analysis, complete the steps below:
+<STEPS FOR DETAILED ANALYSIS>
 Include potential legal issues, relevant laws or regulations, and suggested next steps. Format the response clearly and cite specific parts of the document where relevant. If no relevant chunks are provided, base your analysis solely on the user input.
 
 Your response should be structured as follows:
@@ -93,7 +98,11 @@ Your response should be structured as follows:
 5. Suggested next steps
 6. Disclaimer
 
-Please answer the User Input using the relevant document chunks to the best of your ability.
+Your response should be structured in markdown, with newlines after headers.
+</STEPS FOR DETAILED ANALYSIS>
+
+Please answer the User Input to the best of your ability. If there are no relevant requested chunks, don't use the chunks. 
+Always provide an answer, even if it requires you use pre-trained knowledge instead of provided context.
 """
 
         response = model.generate_content(prompt)
