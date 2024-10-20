@@ -35,7 +35,7 @@ const LandingPage = () => {
         </p>
 
         <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
-          <Link href="/auth" className="group relative inline-flex items-center justify-center">
+        <Link href="/playground" className="group relative inline-flex items-center justify-center">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
             <button className="relative px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-lg transition duration-300 shadow-lg">
               Try For Free
@@ -145,9 +145,9 @@ const LandingPage = () => {
         <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
         <div className="max-w-7xl mx-auto px-6 text-center space-y-4 relative">
           <h2 className="text-4xl md:text-5xl font-bold text-white">Start Saving on Legal Costs Today</h2>
-          <p className="text-xl text-blue-100/90 font-light">Join thousands of businesses saving up to 85% on legal document costs</p>
+          <p className="text-xl text-blue-100/90 font-light">New features coming soon!</p>
           <div className="flex flex-col md:flex-row gap-4 items-center justify-center mt-8">
-            <Link href="/auth" className="group relative inline-flex items-center justify-center">
+          <Link href="/playground" className="group relative inline-flex items-center justify-center">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-blue-300 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
               <button className="relative px-8 py-4 bg-white text-blue-600 hover:bg-blue-50 rounded-lg text-lg transition duration-300 shadow-lg font-medium">
                 Start Free Trial
