@@ -17,7 +17,6 @@ chromadb==0.5.15
 click==8.1.7
 coloredlogs==15.0.1
 Deprecated==1.2.14
-distro==1.9.0
 durationpy==0.9
 fastapi==0.115.2
 filelock==3.16.1
@@ -31,7 +30,6 @@ google-api-core==2.21.0
 google-api-python-client==2.149.0
 google-auth==2.35.0
 google-auth-httplib2==0.2.0
-google-cloud-texttospeech==2.18.0
 google-generativeai==0.8.3
 googleapis-common-protos==1.65.0
 grpcio==1.67.0
@@ -48,7 +46,6 @@ importlib_metadata==8.4.0
 importlib_resources==6.4.5
 itsdangerous==2.2.0
 Jinja2==3.1.4
-jiter==0.6.1
 jsonpatch==1.33
 jsonpointer==3.0.0
 kubernetes==31.0.0
@@ -66,7 +63,6 @@ multidict==6.1.0
 numpy==1.26.4
 oauthlib==3.2.2
 onnxruntime==1.19.2
-openai==1.52.0
 opentelemetry-api==1.27.0
 opentelemetry-exporter-otlp-proto-common==1.27.0
 opentelemetry-exporter-otlp-proto-grpc==1.27.0
