@@ -1,131 +1,172 @@
-'use client';
+"use client";
 
-import Image from "next/image";
-import { useState } from "react";
+import Link from 'next/link';
+import React from 'react';
 
-export default function Home() {
-  const [message, setMessage] = useState("");
-
-  const fetchMessage = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:5000/api/message');
-      const data = await response.json();
-      setMessage(data.message);
-    } catch (error) {
-      console.error('Error fetching message:', error);
-      setMessage('Failed to fetch message from backend');
-    }
-  };
-
+const LandingPage = () => {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-b from-[#001f3f] to-[#000a1a] text-white selection:bg-blue-600/30">
+      {/* Custom Font Styles */}
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <button
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            onClick={fetchMessage}
-          >
-            Fetch Message from Backend
-          </button>
-          {message && (
-            <p className="mt-4 text-center sm:text-left">
-              Message from backend: {message}
-            </p>
-          )}
+        h1, h2, h3 {
+          font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+          font-family: 'Poppins', sans-serif;
+        }
+      `}</style>
+
+      {/* Hero Section */}
+      <section className="flex flex-col items-center justify-center min-h-screen px-6 space-y-8 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+        
+        <div className="relative">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur opacity-30 animate-pulse" />
+          <h1 className="relative text-6xl md:text-7xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-blue-50">
+            LegalAI
+          </h1>
         </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        <p className="text-2xl max-w-2xl mx-auto text-blue-100/90 font-light">
+          Save thousands in legal fees. Understand complex legal documents in minutes, not hours.
+        </p>
+
+        <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
+          <Link href="/auth" className="group relative inline-flex items-center justify-center">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+            <button className="relative px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-lg transition duration-300 shadow-lg">
+              Try For Free
+            </button>
+          </Link>
+          <p className="text-blue-100/70 text-sm">No credit card required</p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl">
+          {[
+            { metric: "85%", desc: "Average cost savings vs traditional legal services" },
+            { metric: "15 min", desc: "Average time to understand complex documents" },
+            { metric: "24/7", desc: "Instant access to legal document analysis" },
+          ].map((stat, i) => (
+            <div key={i} className="flex flex-col items-center">
+              <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-blue-50">{stat.metric}</span>
+              <span className="text-sm text-blue-100/70 mt-2">{stat.desc}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Scroll Down Indicator */}
+        <div className="absolute bottom-10 animate-fade-in-up">
+          <p className="text-lg font-light opacity-70">See How It Works</p>
+          <svg className="w-6 h-6 mx-auto mt-2 animate-bounce opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-20 bg-[#002b5c]/90 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-6 text-center space-y-6">
+          <h2 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-blue-50">
+            Cut Through Legal Complexity
+          </h2>
+          <p className="text-xl text-blue-100/80 font-light">
+            Get instant clarity on legal documents at a fraction of traditional costs.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+            {[
+              {
+                title: "Smart Document Analysis",
+                desc: "Our AI breaks down complex legal language into clear, actionable points, saving you expensive consultation hours."
+              },
+              {
+                title: "Native Understanding",
+                desc: "Our AI simplifies the content and voices it out into your native language"
+              },
+              {
+                title: "Risk Identification",
+                desc: "Automatically highlight potential issues and obligations, preventing costly oversights."
+              }
+            ].map((feature, i) => (
+              <div key={i} className="group p-6 rounded-lg bg-[#003c71]/50 backdrop-blur-sm border border-blue-400/10 transition-all duration-300 hover:border-blue-400/30 hover:bg-[#003c71]/80">
+                <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-blue-50">
+                  {feature.title}
+                </h3>
+                <p className="text-blue-100/70">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Use Cases Section */}
+      <section className="py-16 bg-[#003b5c]/90 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-6 text-center space-y-6">
+          <h2 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-blue-50">
+            Save Time & Money
+          </h2>
+          <p className="text-xl text-blue-100/80 font-light">
+            Perfect for businesses and individuals looking to reduce legal costs.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+            {[
+              {
+                title: "Contract Review",
+                desc: "Review contracts in minutes instead of hours. Identify key terms, obligations, and potential risks without expensive lawyer consultations."
+              },
+              {
+                title: "Legal Document Drafting",
+                desc: "Get guidance on document creation and modification, reducing dependency on costly legal services."
+              },
+              {
+                title: "Lease Review",
+                desc: "Efficiently analyze lease agreements to understand terms, conditions, and potential red flags, ensuring informed decision-making."
+              },
+              {
+                title: "Legal Fee Savings",
+                desc: "Reduce legal consulting hours by getting instant clarity on document contents and implications."
+              }
+            ].map((use, i) => (
+              <div key={i} className="group p-6 rounded-lg bg-[#003c71]/50 backdrop-blur-sm border border-blue-400/10 transition-all duration-300 hover:border-blue-400/30 hover:bg-[#003c71]/80">
+                <h3 className="text-2xl font-semibold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-100 to-blue-50">
+                  {use.title}
+                </h3>
+                <p className="text-blue-100/70">{use.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <section className="py-16 bg-gradient-to-r from-blue-600 to-blue-700 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+        <div className="max-w-7xl mx-auto px-6 text-center space-y-4 relative">
+          <h2 className="text-4xl md:text-5xl font-bold text-white">Start Saving on Legal Costs Today</h2>
+          <p className="text-xl text-blue-100/90 font-light">Join thousands of businesses saving up to 85% on legal document costs</p>
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-center mt-8">
+            <Link href="/auth" className="group relative inline-flex items-center justify-center">
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-blue-300 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
+              <button className="relative px-8 py-4 bg-white text-blue-600 hover:bg-blue-50 rounded-lg text-lg transition duration-300 shadow-lg font-medium">
+                Start Free Trial
+              </button>
+            </Link>
+            <span className="text-blue-100/70">or</span>
+            <Link href="/pricing" className="text-blue-100 hover:text-white transition-colors">
+              View Pricing Plans →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-8 bg-blue-900/50 backdrop-blur-sm text-center text-sm text-blue-100/50">
+        © 2024 Legal AI. All rights reserved.
       </footer>
     </div>
   );
-}
+};
+
+export default LandingPage;
