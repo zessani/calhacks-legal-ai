@@ -142,7 +142,7 @@ const LandingPage = () => {
 
       {/* Call to Action Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-blue-700 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+        <div className="absolute inset-0 bg-[#002b5c]/90 bg-center ]" />
         <div className="max-w-7xl mx-auto px-6 text-center space-y-4 relative">
           <h2 className="text-4xl md:text-5xl font-bold text-white">Start Saving on Legal Costs Today</h2>
           <p className="text-xl text-blue-100/90 font-light">New features coming soon!</p>
@@ -150,7 +150,7 @@ const LandingPage = () => {
           <Link href="/playground" className="group relative inline-flex items-center justify-center">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-400 to-blue-300 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200" />
               <button className="relative px-8 py-4 bg-white text-blue-600 hover:bg-blue-50 rounded-lg text-lg transition duration-300 shadow-lg font-medium">
-                Start Free Trial
+                Try For Free
               </button>
             </Link>
             <span className="text-blue-100/70">or</span>
