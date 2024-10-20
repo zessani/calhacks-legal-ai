@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
 import ReactMarkdown from 'react-markdown';
 import { FaFileAlt, FaTimes, FaTrash } from 'react-icons/fa'; // Add this import at the top of the file
 import { Tooltip } from 'react-tooltip';
+import { useTTS } from '@cartesia/cartesia-js/react';
 
 const API_ENDPOINT = 'http://127.0.0.1:5000';
 
@@ -129,7 +130,7 @@ const translations = {
     askQuestion: '質問してください...',
     askAboutDocument: 'アップロードされた文書について質問してください...',
     send: '送信',
-    uploaded: 'アップロード済み:',
+    uploaded: 'アップロー済み:',
     close: '閉じる',
     warning: '警告',
     changeLanguageWarning: '言語を変更すると、すべての履歴がリセットされます。続行してもよろしいですか？',
@@ -172,7 +173,7 @@ const translations = {
     uploaded: 'अपलोड किया गया:',
     close: 'बंद करें',
     warning: 'चेतावनी',
-    changeLanguageWarning: 'भाषा बदलने से सारा इतिहास रीसेट हो जाएगा  ��� च ह?',
+    changeLanguageWarning: 'भाषा बदलने से सारा इत ���ट ो जाएगा  च ह?',
     cancel: 'द्द करें',
     confirm: 'पुष्टि करें',
     clickForAnalysis: 'विश्लेषण के लिए क्लिक करें',
@@ -247,6 +248,58 @@ export default function Home() {
   const [relevantChunks, setRelevantChunks] = useState<RelevantChunk[]>([]);
   const [sentencesWithChunks, setSentencesWithChunks] = useState<SentenceWithChunks[]>([]);
   const [citations, setCitations] = useState<Citation[]>([]);
+  const [aiSummary, setAiSummary] = useState("");
+  const [isThinking, setIsThinking] = useState(false);
+
+  const tts = useTTS({
+    apiKey: "00bd3032-50f3-4080-8f3a-ee13c3735a0a",
+    sampleRate: 44100,
+  });
+
+  // Map languages to voice IDs
+  const languageVoiceMap: { [key: string]: string } = {
+    'en-US': "41534e16-2966-4c6b-9670-111411def906", // English
+    'es-ES': "15d0c2e2-8d29-44c3-be23-d585d5f154a1", // Spanish
+    'fr-FR': "a8a1eb38-5f15-4c1d-8722-7ac0f329727d", // French
+    'zh-CN': "e90c6678-f0d3-4767-9883-5d0ecf5894a8", // Chinese
+    'hi-IN': "ac7ee4fa-25db-420d-bfff-f590d740aeb2", // Hindi
+  };
+
+  const playTTS = async (text: string) => {
+    const languageCode = selectedLanguage.code.split('-')[0];
+    const voiceId = languageVoiceMap[selectedLanguage.code] || languageVoiceMap['en-US'];
+
+    try {
+      // Begin buffering the audio
+      const bufferPromise = tts.buffer({
+        model_id: "sonic-multilingual",
+        voice: {
+          mode: "id",
+          id: voiceId,
+        },
+        transcript: text,
+        language: languageCode,
+      });
+
+      // Wait for buffering to complete
+      await bufferPromise;
+
+      // Start the speaking animation and play the audio simultaneously
+      setIsSpeaking(true);
+      setShowAnalysisIndicator(false);
+
+      const playPromise = tts.play();
+
+      // Wait for the audio to finish playing
+      await playPromise;
+
+    } catch (error) {
+      console.error('Error playing TTS:', error);
+    } finally {
+      setIsSpeaking(false);
+      setShowAnalysisIndicator(true);
+    }
+  };
 
   useEffect(() => {
     const storedLanguage = localStorage.getItem('selectedLanguage');
@@ -340,89 +393,64 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
-    if (!userInput || inputLocked) return;
+    if (userInput.trim() === '' || inputLocked) return;
 
     setInputLocked(true);
     setIsLoading(true);
     setShowTranscript(false);
-
-    let documentContext = '';
-    if (tempUploadedFile) {
-      try {
-        const content = await tempUploadedFile.text();
-        const chunkResponse = await fetch(`${API_ENDPOINT}/api/chunk_document`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ text: content, name: tempUploadedFile.name }),
-        });
-
-        if (!chunkResponse.ok) {
-          throw new Error('Failed to chunk document');
-        }
-
-        const chunkData = await chunkResponse.json();
-        const newDocument: Document = { 
-          name: tempUploadedFile.name, 
-          content, 
-          chunks: chunkData.chunks 
-        };
-        setDocuments(prev => [...prev, newDocument]);
-        localStorage.setItem('uploadedDocuments', JSON.stringify([...documents, newDocument]));
-        documentContext = content;
-        setTempUploadedFile(null);
-        setToast({ message: "Document processed and saved successfully.", type: 'success' });
-      } catch (error) {
-        console.error('Error processing document:', error);
-        setToast({ message: "Failed to process the document. Please try again.", type: 'error' });
-        setInputLocked(false);
-        setIsLoading(false);
-        return;
-      }
-    }
+    setIsThinking(true);
+    setShowAnalysisIndicator(false);
 
     try {
-      const response = await fetch(`${API_ENDPOINT}/api/llm_inference`, {
+      const response = await fetch(`${API_ENDPOINT}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-          text: userInput, 
-          doc_name: tempUploadedFile?.name || ''
+          messages: [{ role: 'user', content: userInput }]
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get LLM response');
+        throw new Error('Failed to get response from server');
       }
 
       const data = await response.json();
-      let translatedResponse = data.response;
-      setCitations(data.citations);
+      console.log('Received data from server:', data);
 
-      // Translate the response if the selected language is not English
+      let translatedMessage = data.message;
+      let translatedSummary = data.summary;
+
+      // Translate the message and summary if the selected language is not English
       if (selectedLanguage.code !== 'en-US') {
-        translatedResponse = await translateText(data.response, selectedLanguage.code.split('-')[0]);
+        translatedMessage = await translateText(data.message, selectedLanguage.code.split('-')[0]);
+        translatedSummary = await translateText(data.summary, selectedLanguage.code.split('-')[0]);
       }
 
-      setAiResponse(translatedResponse);
-      simulateSpeaking(translatedResponse);
-      setShowAnalysisIndicator(true);
+      setAiResponse(translatedMessage);
+      setAiSummary(translatedSummary);
+      setCitations(data.citations);
 
       // Update notes based on the AI's response
-      updateNotes(translatedResponse);
+      updateNotes(translatedMessage);
+
+      // Stop thinking animation before playing TTS
+      setIsThinking(false);
+
+      // Play the TTS for the AI's summary
+      await playTTS(translatedSummary);
+
     } catch (error) {
-      console.error('Error getting LLM response:', error);
-      const errorMessage = 'Failed to get LLM response. Please try again.';
-      const translatedError = await translateText(errorMessage, selectedLanguage.code.split('-')[0]);
-      setAiResponse(translatedError);
-      simulateSpeaking(translatedError);
+      console.error('Error in handleSubmit:', error);
+      setAiResponse("An error occurred while processing your request.");
+      setAiSummary("An error occurred.");
     } finally {
       setIsLoading(false);
       setUserInput("");
       setInputLocked(false);
+      setIsThinking(false);
+      setShowAnalysisIndicator(true);
     }
   };
 
@@ -829,8 +857,19 @@ export default function Home() {
                     </svg>
                   </div>
                 )}
-                {showAnalysisIndicator && !isLoading && !isSpeaking && (
-                  <div className="absolute top-0 right-0 w-4 h-4 bg-blue-500 rounded-full animate-pulse" />
+                {showAnalysisIndicator && !isLoading && !isSpeaking && !isThinking && (
+                  <motion.div
+                    className="absolute inset-0 border-4 border-blue-500 rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  />
+                )}
+                {isThinking && (
+                  <motion.div
+                    className="absolute inset-0 border-4 border-yellow-500 rounded-full"
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  />
                 )}
               </div>
             </div>
@@ -856,7 +895,7 @@ export default function Home() {
                 </div>
               )}
               <div className="relative flex items-center">
-                <label htmlFor="file-upload" className="absolute left-3 cursor-pointer">
+                <label htmlFor="file-upload" className="absolute left-3 top-1/2 transform -translate-y-1/2 cursor-pointer">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white hover:text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
